@@ -4,11 +4,11 @@ Turkey-Stories
 CSCE 438 Project
 
 Instructions:
-	- Replace the placeholders for the ACCESS_ID and SECRET_KEY in main.py and run main.
-	- It should run without issue and print out the 'completed' story, you can go to https://workersandbox.mturk.com/ and verify that the hits have been created
-		* Note that only the hit generating portion of this code is complete. I have placed dummy data instead of actual results to test each HIT. 
-		* We still need to complete gathering the actual data, and also waiting for the hit completion before generating the subsequent hit
-		* I have sufficiently commented out the main to point these areas out
+- Replace the placeholders for the ACCESS_ID and SECRET_KEY in main.py and run main.
+- It should run without issue and print out the 'completed' story, you can go to https://workersandbox.mturk.com/ and verify that the hits have been created
+* Note that only the hit generating portion of this code is complete. I have placed dummy data instead of actual results to test each HIT. 
+* We still need to complete gathering the actual data, and also waiting for the hit completion before generating the subsequent hit
+* I have sufficiently commented out the main to point these areas out
 
 Files:
 - main.py
