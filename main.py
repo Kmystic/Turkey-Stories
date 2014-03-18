@@ -2,6 +2,7 @@ import mturk_first_sentence
 import mturk_vote_sentence
 import mturk_middle_sentence
 import mturk_end_sentence
+import mturk_vote_story
 
 """
 Constant values
@@ -29,23 +30,25 @@ VOTE_NUM_ASSIGNMENTS = 1
 VOTE_HIT_DURATION = 60*5
 VOTE_HIT_REWARD = 0.01
 
+VOTE_STORY_NUM_ASSIGNMENTS = 1
+VOTE_STORY_HIT_DURATION = 60*5
+VOTE_STORY_HIT_REWARD = 0.01
+
 """
 This main function is responsable for generating hits,
 """
 if __name__=="__main__":
+	
 	starter_sentence1 = "Once upon a time in a land far away there lived princess with skin as pale as snow and hair as red as fire."
-	starter_sentence2 = "A gust of wind blew the bangs from his face as he galloped down the hill."
-	starter_sentence3 = "Tim looked around nervously before reaching his hand into the cookie jar."
+	#starter_sentence2 = "A gust of wind blew the bangs from his face as he galloped down the hill."
+	#starter_sentence3 = "Tim looked around nervously before reaching his hand into the cookie jar."
 
 	'''
 	Issue beginning hits
 	'''
 	beg_hit1 = mturk_first_sentence.FirstSentenceHit(ACCESS_ID, SECRET_KEY, HOST, starter_sentence1)
 	beg_hit1.generate_hit(BEG_NUM_ASSIGNMENTS, BEG_HIT_DURATION, BEG_HIT_REWARD)
-	#beg_hit2 = FirstSentenceHit(ACCESS_ID, SECRET_KEY, HOST, starter_sentence2)
-	#beg_hit2.generate_hit(BEG_NUM_ASSIGNMENTS, BEG_HIT_DURATION, BEG_HIT_REWARD)
-	#beg_hit3 = FirstSentenceHit(ACCESS_ID, SECRET_KEY, HOST, starter_sentence3)
-	#beg_hit3.generate_hit(BEG_NUM_ASSIGNMENTS, BEG_HIT_DURATION, BEG_HIT_REWARD)
+
 
 	''' 
 	Wait for hit completion then gather hit data 
@@ -117,10 +120,22 @@ if __name__=="__main__":
 	'''
 	story1_best_choice = 'The villagers wept for their princess who had skin as pale as snow and hair as red as fire.'
 	story1.append(story1_best_choice)
+
 	'''
-	Publish the storie to word press
+	Publish the story to word press
 	'''
 	for sentence in story1:
 		print sentence
+	 
+	'''
+	Example to vote on several stories:
 
+	story1 = ['First Sentence.','Second Sentence', 'Third Sentence']
+	story2 = ['First Sentence.','Second Sentence', 'Third Sentence']
+	stories = []
+	stories.append(story1)
+	stories.append(story2)
+	vote_story_hit1 = mturk_vote_story.VotingStoryHit(ACCESS_ID, SECRET_KEY, HOST, stories)
+	vote_story_hit1.generate_hit(VOTE_STORY_NUM_ASSIGNMENTS, VOTE_STORY_HIT_DURATION, VOTE_STORY_HIT_REWARD)
+	'''
 		

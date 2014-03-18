@@ -45,4 +45,8 @@ Files:
 	  - This python code creates a HIT with two questions. 
 	    - Question one asks the turker to copy the first sentence of the provided story to verify they are reading the story.
 	    - Question two asks the turker to pick from a set of sentences the best one to continue the story.
+	- mturk_vote_story.py
+	  - This python code creates a HIT with two questions. 
+	    - Question one asks the turker to copy the first sentence of the second story to verify they are reading the story.
+	    - Question two asks the turker to pick from a set of stories the best story.
 
