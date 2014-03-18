@@ -3,6 +3,7 @@ Turkey-Stories
 
 CSCE 438 Project
 
+<<<<<<< HEAD
 Instructions:
 	- Replace the placeholders for the ACCESS_ID and SECRET_KEY in main.py and run main.
 	- It should run without issue and print out the 'completed' story, you can go to https://workersandbox.mturk.com/ and verify that the hits have been created
@@ -46,3 +47,9 @@ Files:
 	    - Question one asks the turker to copy the first sentence of the provided story to verify they are reading the story.
 	    - Question two asks the turker to pick from a set of sentences the best one to continue the story.
 
+=======
+- mturk_first_sentence.py
+  - This python code creates a HIT with two questions. 
+    - Question one asks the turker to copy the provided sentence to verify they are reading the sentence. 
+    - Question two asks the turker to add a sentence to continue the story began by the given sentence.
+>>>>>>> 24b559074eed0354ef7445566ffabbc742b4d26f
