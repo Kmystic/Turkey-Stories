@@ -25,14 +25,24 @@ class WordPressPoster(object):
 		# Get number of posts to number the story title, i.e. if this is the 6th story
 		# that will get posted the title will be "Story 6"
 		print "Retrieving posts"
-		list_of_posts = self.wp.call(GetPosts())
-		num_of_post_so_far = len(list_of_posts)
-		print num_of_post_so_far
+
+		# get pages in batches of 20
+		num_of_post = 0
+		offset = 0
+		increment = 20
+		while True:
+				posts_from_current_batch = self.wp.call(posts.GetPosts({'number': increment, 'offset': offset}))
+				if len(posts_from_current_batch) == 0:
+						break  # no more posts returned
+				else:
+					num_of_post += len(posts_from_current_batch)
+				offset = offset + increment
+		print num_of_post
 
 		# Create new post
 		print "Creating new post..."
 		post = WordPressPost()
-		post.title = 'Story %d' % (num_of_post_so_far + 1) # incrementing the number of post by 1
+		post.title = 'Story %d' % (num_of_post + 1) # incrementing the number of post by 1
 		# convert each sentence to string, and join separated by a space.
 		post.content = " ".join(map(str, story))
 		post.id = self.wp.call(posts.NewPost(post))
