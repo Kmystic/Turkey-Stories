@@ -3,6 +3,7 @@ import mturk_vote_sentence
 import mturk_middle_sentence
 import mturk_end_sentence
 import mturk_vote_story
+import mturk_wordpress
 
 """
 Constant values
@@ -11,6 +12,10 @@ Constant values
 ACCESS_ID ='InputAccessID'
 SECRET_KEY = 'InputSecretKey'
 HOST = 'mechanicalturk.sandbox.amazonaws.com'
+
+WORDPRESS_USERNAME = CHANGE_ME_TO_USERNAME
+WORDPRESS_PASSWORD = CHANGE_ME_TO_PASSWORD
+WORDPRESS_HOST = 'http://turkeystories.wordpress.com/xmlrpc.php'
 
 NUM_MIDDLE_SENTECES = 1
 
@@ -126,7 +131,7 @@ if __name__=="__main__":
 	'''
 	for sentence in story1:
 		print sentence
-	 
+
 	'''
 	Example to vote on several stories:
 
@@ -138,4 +143,8 @@ if __name__=="__main__":
 	vote_story_hit1 = mturk_vote_story.VotingStoryHit(ACCESS_ID, SECRET_KEY, HOST, stories)
 	vote_story_hit1.generate_hit(VOTE_STORY_NUM_ASSIGNMENTS, VOTE_STORY_HIT_DURATION, VOTE_STORY_HIT_REWARD)
 	'''
-		
+
+	# Publish story
+	wpp = mturk_wordpress.WordPressPoster(WORDPRESS_USERNAME, WORDPRESS_PASSWORD, WORDPRESS_HOST)
+	wpp.post_to_wordpress(story1)
+	# TODO: edit ^ to post the story that was voted best
