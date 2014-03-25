@@ -51,7 +51,7 @@ class VotingSentenceHit(object):
     # BUILD QUESTION 1: Copy the first sentence of the story 
      
     qc1 = QuestionContent()
-    qc1.append_field('Title','Copy verbatim the first sentence of the provided incomplete story. Please keep all capitalization and punctuation as given.')
+    qc1.append_field('Title','Copy verbatim the first sentence of the provided incomplete story. Please keep all capitalization and punctuation as given. Your sumbission will automatically be rejected if any character is incorrect.')
     fta1 = FreeTextAnswer()
     q1 = Question(identifier='verify_sentence', content = qc1, answer_spec = AnswerSpecification(fta1), is_required = True)
 

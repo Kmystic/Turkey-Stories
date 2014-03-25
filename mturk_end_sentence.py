@@ -49,14 +49,14 @@ class EndSentenceHit(object):
     # BUILD QUESTION 1: Copy the first sentence of the story 
      
     qc1 = QuestionContent()
-    qc1.append_field('Title','Copy verbatim the first sentence of the provided incomplete story. Please keep all capitalization and punctuation as given.')
+    qc1.append_field('Title','Copy verbatim the first sentence of the provided incomplete story. Please keep all capitalization and punctuation as given. Your sumbission will automatically be rejected if any character is incorrect.')
     fta1 = FreeTextAnswer()
     q1 = Question(identifier='verify_sentence', content = qc1, answer_spec = AnswerSpecification(fta1), is_required = True)
 
     # BUILD QUESTION 2: Create new sentence 
 
     qc2 = QuestionContent()
-    qc2.append_field('Title','Type a single concluding sentence to complete the story.')
+    qc2.append_field('Title','Type a single concluding sentence to complete the story, and please ensure the sentence ends with a period.')
     fta2 = FreeTextAnswer()
     q2 = Question(identifier='create_sentence', content = qc2, answer_spec = AnswerSpecification(fta2), is_required = True)
 
