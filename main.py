@@ -3,8 +3,10 @@ import mturk_vote_sentence
 import mturk_middle_sentence
 import mturk_end_sentence
 import mturk_vote_story
+import mturk_vote_end_sentence
 import mturk_wordpress
 import time
+import random
 from boto.mturk.connection import MTurkConnection
 from boto.mturk.question import QuestionContent,Question,QuestionForm,Overview,AnswerSpecification,SelectionAnswer,FormattedContent,FreeTextAnswer
 
@@ -14,47 +16,66 @@ Constant values
 
 
 
-ACCESS_ID ='replace with ACCESS_ID'
-SECRET_KEY = 'replace with SECRET_KEY'
+ACCESS_ID ='replace with accessID'
+SECRET_KEY = 'replace with secretKey'
 HOST = 'mechanicalturk.sandbox.amazonaws.com'
 
-WORDPRESS_USERNAME = 'replace with USERNAME'
-WORDPRESS_PASSWORD = 'replace with PASSWORD'
+WORDPRESS_USERNAME = 'username'
+WORDPRESS_PASSWORD = 'password'
 WORDPRESS_HOST = 'http://turkeystories.wordpress.com/xmlrpc.php'
 
 
 NUM_MIDDLE_SENTENCES = 1
 NUM_SAME_STORY = 2
 
-BEG_NUM_ASSIGNMENTS = 3
+BEG_NUM_ASSIGNMENTS = 2
 BEG_HIT_DURATION = 60*10
 BEG_HIT_REWARD = 0.01
 
-MIDDLE_NUM_ASSIGNMENTS = 3
+MIDDLE_NUM_ASSIGNMENTS = 2
 MIDDLE_HIT_DURATION = 60*10
 MIDDLE_HIT_REWARD = 0.01
 
-END_NUM_ASSIGNMENTS = 3
+END_NUM_ASSIGNMENTS = 2
 END_HIT_DURATION = 60*10
 END_HIT_REWARD = 0.01
 
-VOTE_NUM_ASSIGNMENTS = 3
+VOTE_NUM_ASSIGNMENTS = 2
 VOTE_HIT_DURATION = 60*10
 VOTE_HIT_REWARD = 0.01
 
-VOTE_STORY_NUM_ASSIGNMENTS = 3
+VOTE_STORY_NUM_ASSIGNMENTS = 2
 VOTE_STORY_HIT_DURATION = 60*10
 VOTE_STORY_HIT_REWARD = 0.01
 
 
 backup_sentences = ['Ya know?', 
-                    'And stuff like that.',
                     'Or whatever.',
                     'So...',
-                    'Literally.']
+                    'Literally.',
+					'It was a beautiful sunny day.',
+					'It was a very dark day.',
+					'The end was near.',
+					'It was indeed a tragedy.',
+					'It was just the beginning.',
+					'No one would have guessed it.',
+					'It will never be the same.',
+					'Thats right.']
 
-def random_sentence():
-	return backup_sentences[randrange(0,backup_sentences.count)]
+def get_random_sentence_choices():
+	random_sentence_choices = []
+	randNumberList = random.sample(range(len(backup_sentences)),3)
+	sentence1 = backup_sentences[randNumberList[0]]
+	print sentence1
+	sentence2 = backup_sentences[randNumberList[1]]
+	print sentence2
+	sentence3 = backup_sentences[randNumberList[2]]
+	print sentence3
+	random_sentence_choices.append(sentence1)
+	random_sentence_choices.append(sentence2)
+	random_sentence_choices.append(sentence3)
+	return random_sentence_choices #list of 3 random sentence choices
+		
 
 '''
 Function for obtaining all hits that have been completed or that have expired
@@ -94,8 +115,11 @@ def verify_story_sentences(mtc, hits, verify_sentence):
 	story_sentence_choices = []
 	for hit in hits:
 		assignments = mtc.get_assignments(hit.HITId)
+		assignmentsRejectedCount = 0
+		assignmentsCount = 0
 		for assignment in assignments:
-			values_list = [];
+			assignmentsCount += 1
+			values_list = []
 			# Get question form answers
 			for question_form_answer in assignment.answers[0]:
 				for value in question_form_answer.fields:
@@ -106,6 +130,9 @@ def verify_story_sentences(mtc, hits, verify_sentence):
 				story_sentence_choices.append(values_list[1])
 			else:
 				mtc.reject_assignment(assignment.AssignmentId, 'Your submission was rejected because you did not copy the stated sentence correctly.')
+				assignmentsRejectedCount += 1
+		if assignmentsRejectedCount == assignmentsCount : #if all assignments are rejected select a random list of story sentence choices
+			story_sentence_choices = list(get_random_sentence_choices())
 		mtc.disable_hit(hit.HITId)
 	return story_sentence_choices
 
@@ -113,7 +140,10 @@ def verify_best_choices(mtc, hits, verify_sentence):
 	for hit in hits:
 		assignments = mtc.get_assignments(hit.HITId)
 		list_of_votes = []
+		assignmentsRejectedCount = 0
+		assignmentsCount = 0
 		for assignment in assignments:
+			assignmentsCount += 1
 			values_list = [];
 			for question_form_answer in assignment.answers[0]:
 				for value in question_form_answer.fields:
@@ -123,7 +153,11 @@ def verify_best_choices(mtc, hits, verify_sentence):
 				list_of_votes.append(values_list[1])
 			else:
 				mtc.reject_assignment(assignment.AssignmentId, 'Your submission was rejected because you did not copy the stated sentence correctly.')
-		story_best_choice_num = max(list_of_votes, key=list_of_votes.count)
+				assignmentsRejectedCount += 1
+		if assignmentsRejectedCount == assignmentsCount : #if all assignments are rejected select the first sentence as the best choice
+			story_best_choice_num = 0
+		else :
+			story_best_choice_num = max(list_of_votes, key=list_of_votes.count)
 		mtc.disable_hit(hit.HITId)
 	return story_best_choice_num
 
@@ -141,9 +175,11 @@ if __name__=="__main__":
 	'''
 	Starter sentence
 	'''
-	starter_sentence = "Once upon a time in a land far away there lived princess with skin as pale as snow and hair as red as fire."
-	#starter_sentence2 = "A gust of wind blew the bangs from his face as he galloped down the hill."
-	#starter_sentence3 = "Tim looked around nervously before reaching his hand into the cookie jar."
+	starter_sentence_list = ["Once upon a time in a land far away there lived princess with skin as pale as snow and hair as red as fire.",
+							"A short time ago, in a land not so far away, there lived an evil professor named Schmaverlee.",
+							"Tim looked around nervously before reaching his hand into the cookie jar."]
+	starter_sentence = starter_sentence_list[random.randrange(0, len(starter_sentence_list))] #random starter sentence selection
+
 
 	# Stores the resulting stories for the same starter sentence as a list of string lists
 	list_of_stories = []
@@ -255,7 +291,7 @@ if __name__=="__main__":
 		print 'Ending hit assignment verified results:'
 		print '\t ' + str(story_sentence_choices)
 		print 'Issuing vote hit for ending assignments...'
-		vote_hit = mturk_vote_sentence.VotingSentenceHit(ACCESS_ID, SECRET_KEY, HOST, story, story_sentence_choices)
+		vote_hit = mturk_vote_end_sentence.VotingSentenceHit(ACCESS_ID, SECRET_KEY, HOST, story, story_sentence_choices)
 		vote_hit.generate_hit(VOTE_NUM_ASSIGNMENTS, VOTE_HIT_DURATION, VOTE_HIT_REWARD)
 		'''
 		Wait on hit completion
