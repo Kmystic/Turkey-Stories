@@ -24,23 +24,23 @@ WORDPRESS_HOST = 'http://turkeystories.wordpress.com/xmlrpc.php'
 NUM_MIDDLE_SENTENCES = 1
 NUM_SAME_STORY = 2
 
-BEG_NUM_ASSIGNMENTS = 1
+BEG_NUM_ASSIGNMENTS = 2
 BEG_HIT_DURATION = 60*10
 BEG_HIT_REWARD = 0.01
 
-MIDDLE_NUM_ASSIGNMENTS = 1
+MIDDLE_NUM_ASSIGNMENTS = 2
 MIDDLE_HIT_DURATION = 60*10
 MIDDLE_HIT_REWARD = 0.01
 
-END_NUM_ASSIGNMENTS = 1
+END_NUM_ASSIGNMENTS = 2
 END_HIT_DURATION = 60*10
 END_HIT_REWARD = 0.01
 
-VOTE_NUM_ASSIGNMENTS = 1
+VOTE_NUM_ASSIGNMENTS = 2
 VOTE_HIT_DURATION = 60*10
 VOTE_HIT_REWARD = 0.01
 
-VOTE_STORY_NUM_ASSIGNMENTS = 1
+VOTE_STORY_NUM_ASSIGNMENTS = 2
 VOTE_STORY_HIT_DURATION = 60*10
 VOTE_STORY_HIT_REWARD = 0.01
 
@@ -76,7 +76,7 @@ def wait() :
 		if len(hits) == 1 :
 			break
 		else:
-			time.sleep(60)
+			time.sleep(10)
 	return hits
 
 def verify_story_sentences(mtc, hits, verify_sentence):
@@ -95,7 +95,7 @@ def verify_story_sentences(mtc, hits, verify_sentence):
 				story_sentence_choices.append(values_list[1])
 			else:
 				mtc.reject_assignment(assignment.AssignmentId, 'Your submission was rejected because you did not copy the stated sentence correctly.')
-		mtc.dispose_hit(hit.HITId)
+		mtc.disable_hit(hit.HITId)
 	return story_sentence_choices
 
 def verify_best_choices(mtc, hits, verify_sentence):
@@ -113,7 +113,7 @@ def verify_best_choices(mtc, hits, verify_sentence):
 			else:
 				mtc.reject_assignment(assignment.AssignmentId, 'Your submission was rejected because you did not copy the stated sentence correctly.')
 		story_best_choice_num = max(list_of_votes, key=values_list.count)
-		mtc.dispose_hit(hit.HITId)
+		mtc.disable_hit(hit.HITId)
 	return story_best_choice_num
 
 '''
@@ -276,16 +276,16 @@ if __name__=="__main__":
 		vote_story_hit.generate_hit(VOTE_STORY_NUM_ASSIGNMENTS, VOTE_STORY_HIT_DURATION, VOTE_STORY_HIT_REWARD)
 		print 'Waiting on vote hit completion...'
 		hits = wait()
-		story_best_choice = list_of_stories[int(verify_best_choices(mtc, hits, list_of_stories[1][0]))]
+		best_story = list_of_stories[int(verify_best_choices(mtc, hits, list_of_stories[0][1]))]
 		print 'Vote hit complete'
 		print 'Vote hit assignment verfied best choice result:'
-		print '\t' + story_best_choice
+		print '\t' + str(best_story)
 	else:
 		best_story = list_of_stories[0]
 
 	'''
 	Publish best voted story to WordPress
 	'''
-	print 'The highest voted story of ' + str(NUM_SAME_STORY) + ' stories has been published at http://turkeystories.wordpress.com/xmlrpc.php'
+	print 'The highest voted story of ' + str(NUM_SAME_STORY) + ' stories has been published at http://turkeystories.wordpress.com'
 	wpp = mturk_wordpress.WordPressPoster(WORDPRESS_USERNAME, WORDPRESS_PASSWORD, WORDPRESS_HOST)
 	wpp.post_to_wordpress(best_story)
