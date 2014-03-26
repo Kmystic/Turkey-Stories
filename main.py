@@ -12,6 +12,8 @@ from boto.mturk.question import QuestionContent,Question,QuestionForm,Overview,A
 Constant values
 """
 
+
+
 ACCESS_ID ='replace with ACCESS_ID'
 SECRET_KEY = 'replace with SECRET_KEY'
 HOST = 'mechanicalturk.sandbox.amazonaws.com'
@@ -24,23 +26,23 @@ WORDPRESS_HOST = 'http://turkeystories.wordpress.com/xmlrpc.php'
 NUM_MIDDLE_SENTENCES = 1
 NUM_SAME_STORY = 2
 
-BEG_NUM_ASSIGNMENTS = 2
+BEG_NUM_ASSIGNMENTS = 3
 BEG_HIT_DURATION = 60*10
 BEG_HIT_REWARD = 0.01
 
-MIDDLE_NUM_ASSIGNMENTS = 2
+MIDDLE_NUM_ASSIGNMENTS = 3
 MIDDLE_HIT_DURATION = 60*10
 MIDDLE_HIT_REWARD = 0.01
 
-END_NUM_ASSIGNMENTS = 2
+END_NUM_ASSIGNMENTS = 3
 END_HIT_DURATION = 60*10
 END_HIT_REWARD = 0.01
 
-VOTE_NUM_ASSIGNMENTS = 2
+VOTE_NUM_ASSIGNMENTS = 3
 VOTE_HIT_DURATION = 60*10
 VOTE_HIT_REWARD = 0.01
 
-VOTE_STORY_NUM_ASSIGNMENTS = 2
+VOTE_STORY_NUM_ASSIGNMENTS = 3
 VOTE_STORY_HIT_DURATION = 60*10
 VOTE_STORY_HIT_REWARD = 0.01
 
@@ -112,7 +114,7 @@ def verify_best_choices(mtc, hits, verify_sentence):
 				list_of_votes.append(values_list[1])
 			else:
 				mtc.reject_assignment(assignment.AssignmentId, 'Your submission was rejected because you did not copy the stated sentence correctly.')
-		story_best_choice_num = max(list_of_votes, key=values_list.count)
+		story_best_choice_num = max(list_of_votes, key=list_of_votes.count)
 		mtc.disable_hit(hit.HITId)
 	return story_best_choice_num
 
