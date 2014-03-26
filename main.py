@@ -47,6 +47,15 @@ VOTE_STORY_HIT_DURATION = 60*10
 VOTE_STORY_HIT_REWARD = 0.01
 
 
+backup_sentences = ['Ya know?', 
+                    'And stuff like that.',
+                    'Or whatever.',
+                    'So...',
+                    'Literally.']
+
+def random_sentence():
+	return backup_sentences[randrange(0,backup_sentences.count)]
+
 '''
 Function for obtaining all hits that have been completed or that have expired
 '''
