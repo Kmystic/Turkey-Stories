@@ -13,42 +13,44 @@ from boto.mturk.question import QuestionContent,Question,QuestionForm,Overview,A
 """
 Constant values
 """
-
-
-
-ACCESS_ID ='replace with accessID'
-SECRET_KEY = 'replace with secretKey'
+ACCESS_ID ='Replace Me'
+SECRET_KEY = 'Replace Me'
 HOST = 'mechanicalturk.sandbox.amazonaws.com'
 
-WORDPRESS_USERNAME = 'username'
-WORDPRESS_PASSWORD = 'password'
+WORDPRESS_USERNAME = 'Replace Me'
+WORDPRESS_PASSWORD = 'Replace Me'
 WORDPRESS_HOST = 'http://turkeystories.wordpress.com/xmlrpc.php'
 
 
-NUM_MIDDLE_SENTENCES = 1
-NUM_SAME_STORY = 2
+NUM_MIDDLE_SENTENCES = 1 # Number of middle sentences the story will contain
+NUM_SAME_STORY = 1 # Number of stories to produce for the same starter sentence
 
-BEG_NUM_ASSIGNMENTS = 2
-BEG_HIT_DURATION = 60*10
-BEG_HIT_REWARD = 0.01
+# Beginning sentence HIT constants
+BEG_NUM_ASSIGNMENTS = 1 # Number of turkers to work on this type of assignment
+BEG_HIT_DURATION = 60*10 # How long to give the turker before HIT ends
+BEG_HIT_REWARD = 0.01 # How much to reward the turker
 
-MIDDLE_NUM_ASSIGNMENTS = 2
+# Middle sentence HIT constants
+MIDDLE_NUM_ASSIGNMENTS = 1
 MIDDLE_HIT_DURATION = 60*10
 MIDDLE_HIT_REWARD = 0.01
 
-END_NUM_ASSIGNMENTS = 2
+# End sentence HIT constants
+END_NUM_ASSIGNMENTS = 1
 END_HIT_DURATION = 60*10
 END_HIT_REWARD = 0.01
 
-VOTE_NUM_ASSIGNMENTS = 2
+# Vote sentence HIT constants
+VOTE_NUM_ASSIGNMENTS = 1
 VOTE_HIT_DURATION = 60*10
 VOTE_HIT_REWARD = 0.01
 
-VOTE_STORY_NUM_ASSIGNMENTS = 2
+# Vote stories HIT constants
+VOTE_STORY_NUM_ASSIGNMENTS = 1
 VOTE_STORY_HIT_DURATION = 60*10
 VOTE_STORY_HIT_REWARD = 0.01
 
-
+# A list of backup sentences to use in the case where no assignments are accepted
 backup_sentences = ['Ya know?', 
                     'Or whatever.',
                     'So...',
@@ -62,15 +64,13 @@ backup_sentences = ['Ya know?',
 					'It will never be the same.',
 					'Thats right.']
 
+# Returns a list of 3 random sentence choices
 def get_random_sentence_choices():
 	random_sentence_choices = []
 	randNumberList = random.sample(range(len(backup_sentences)),3)
 	sentence1 = backup_sentences[randNumberList[0]]
-	print sentence1
 	sentence2 = backup_sentences[randNumberList[1]]
-	print sentence2
 	sentence3 = backup_sentences[randNumberList[2]]
-	print sentence3
 	random_sentence_choices.append(sentence1)
 	random_sentence_choices.append(sentence2)
 	random_sentence_choices.append(sentence3)
@@ -108,9 +108,15 @@ def wait() :
 		if len(hits) == 1 :
 			break
 		else:
-			time.sleep(10)
+			time.sleep(10) # Time to wait before checking for results in seconds
 	return hits
 
+'''
+Function to verify the 'verifiable' question in the HITS that add a sentence
+Approves or rejects hit if verifiable question correct / incorrect based on sentenced passed in
+Returns a list of sentences called story_sentence_choices that contains
+the results of all approved HITS 
+'''
 def verify_story_sentences(mtc, hits, verify_sentence):
 	story_sentence_choices = []
 	for hit in hits:
@@ -131,11 +137,18 @@ def verify_story_sentences(mtc, hits, verify_sentence):
 			else:
 				mtc.reject_assignment(assignment.AssignmentId, 'Your submission was rejected because you did not copy the stated sentence correctly.')
 				assignmentsRejectedCount += 1
-		if assignmentsRejectedCount == assignmentsCount : #if all assignments are rejected select a random list of story sentence choices
+		#if all assignments are rejected select a random list of story sentence choices
+		if assignmentsRejectedCount == assignmentsCount : 
 			story_sentence_choices = list(get_random_sentence_choices())
 		mtc.disable_hit(hit.HITId)
 	return story_sentence_choices
 
+'''
+Function to verify the 'verifiable' question in the HITS that vote on sentences / stories
+Approves or rejects hit if verifiable question correct / incorrect based on sentenced passed in
+Appends the answer choices together and returns the answer choice with the most votes
+(Returns the result as the index of the choice in the list of available choices)
+'''
 def verify_best_choices(mtc, hits, verify_sentence):
 	for hit in hits:
 		assignments = mtc.get_assignments(hit.HITId)
@@ -154,7 +167,8 @@ def verify_best_choices(mtc, hits, verify_sentence):
 			else:
 				mtc.reject_assignment(assignment.AssignmentId, 'Your submission was rejected because you did not copy the stated sentence correctly.')
 				assignmentsRejectedCount += 1
-		if assignmentsRejectedCount == assignmentsCount : #if all assignments are rejected select the first sentence as the best choice
+		#if all assignments are rejected select the first sentence as the best choice
+		if assignmentsRejectedCount == assignmentsCount : 
 			story_best_choice_num = 0
 		else :
 			story_best_choice_num = max(list_of_votes, key=list_of_votes.count)
@@ -165,7 +179,6 @@ def verify_best_choices(mtc, hits, verify_sentence):
 This main function is responsable for generating hits,
 '''
 if __name__=="__main__":
-
 	'''
 	Specify connection
 	'''
@@ -175,10 +188,21 @@ if __name__=="__main__":
 	'''
 	Starter sentence
 	'''
-	starter_sentence_list = ["Once upon a time in a land far away there lived princess with skin as pale as snow and hair as red as fire.",
-							"A short time ago, in a land not so far away, there lived an evil professor named Schmaverlee.",
-							"Tim looked around nervously before reaching his hand into the cookie jar."]
-	starter_sentence = starter_sentence_list[random.randrange(0, len(starter_sentence_list))] #random starter sentence selection
+	print 'Welcome to Turkey Stories!'
+	user_sentence = raw_input('Enter a sentence to begin the story or enter 0 to use a random sentence from our list: ')
+	starter_sentence = ""
+	if user_sentence == '0':
+		starter_sentence_list = ["Once upon a time in a land far away there lived princess with skin as pale as snow and hair as red as fire.",
+								"A short time ago, in a land not so far away, there lived an evil professor named Schmaverlee.",
+								"Tim looked around nervously before reaching his hand into the cookie jar."]
+		starter_sentence = starter_sentence_list[random.randrange(0, len(starter_sentence_list))] #random starter sentence selection
+	else:
+		starter_sentence = user_sentence
+	print 'Turkey Stories will now begin with the following sentence:'
+	print starter_sentence
+	# Write results to file
+	output_file = open('output_file.txt', 'w+')
+	output_file.write('Starter sentence: ' + starter_sentence + '\n')
 
 
 	# Stores the resulting stories for the same starter sentence as a list of string lists
@@ -193,6 +217,8 @@ if __name__=="__main__":
 		'''
 		print '---------------------------------------'
 		print 'Issuing beginning hit for story number ' + str(story_count+1) + '...'
+		output_file.write('---------------------------------------' + '\n')
+		output_file.write('Results for story number ' + str(story_count+1) + ':' + '\n')
 		beg_hit = mturk_first_sentence.FirstSentenceHit(ACCESS_ID, SECRET_KEY, HOST, starter_sentence)
 		beg_hit.generate_hit(BEG_NUM_ASSIGNMENTS, BEG_HIT_DURATION, BEG_HIT_REWARD)
 		
@@ -208,6 +234,8 @@ if __name__=="__main__":
 		print 'Beginning hit complete'
 		print 'Beginning hit assignment verified results:'
 		print '\t ' + str(story_sentence_choices)
+		output_file.write('Beginning hit assignment verified results:' + '\n')
+		output_file.write('\t ' + str(story_sentence_choices) + '\n')
 		#story is the list of one or more sentences that constitute the story
 		story = [starter_sentence]
 		print 'Issuing vote hit for beginning assignments...'
@@ -225,6 +253,8 @@ if __name__=="__main__":
 		print 'Vote hit complete'
 		print 'Vote hit assignment verfied best choice result:'
 		print '\t' + story_best_choice
+		output_file.write('Vote hit assignment verfied best choice result:' + '\n')
+		output_file.write('\t' + story_best_choice + '\n')
 
 		
 
@@ -240,6 +270,8 @@ if __name__=="__main__":
 			print 'Issuing middle hit number ' + str(middle_count+ 1) + '...'
 			middle_hit = mturk_middle_sentence.MiddleSentenceHit(ACCESS_ID, SECRET_KEY, HOST, story)
 			middle_hit.generate_hit(MIDDLE_NUM_ASSIGNMENTS, MIDDLE_HIT_DURATION, MIDDLE_HIT_REWARD)
+			output_file.write('---------------------------------------' + '\n')
+			output_file.write('Results for middle hit ' + str(middle_count+ 1) + ':' + '\n')
 			'''
 			Wait on hit completion
 			Verify middle sentence additions and if valid add them to the list of sentences to be voted on
@@ -252,6 +284,8 @@ if __name__=="__main__":
 			print 'Middle hit complete'
 			print 'Middle hit assignment verified results:'
 			print '\t ' + str(story_sentence_choices)
+			output_file.write('Middle hit assignment verified results:' + '\n')
+			output_file.write('\t ' + str(story_sentence_choices) + '\n')
 
 			print 'Issuing vote hit for middle assignments...'
 			vote_hit = mturk_vote_sentence.VotingSentenceHit(ACCESS_ID, SECRET_KEY, HOST, story, story_sentence_choices)
@@ -267,6 +301,8 @@ if __name__=="__main__":
 			print 'Vote hit complete'
 			print 'Vote hit assignment verfied best choice result:'
 			print '\t' + story_best_choice
+			output_file.write('Vote hit assignment verfied best choice result:' + '\n')
+			output_file.write('\t' + story_best_choice + '\n')
 
 			middle_count += 1
 
@@ -275,6 +311,8 @@ if __name__=="__main__":
 		'''
 		print '---------------------------------------'
 		print 'Issuing ending hit for story number ' + str(story_count+1) + '...'
+		output_file.write('---------------------------------------' + '\n')
+		output_file.write('Results for ending hit for story number ' + str(story_count+1) + ':' + '\n')
 		end_hit = mturk_end_sentence.EndSentenceHit(ACCESS_ID, SECRET_KEY, HOST, story)
 		end_hit.generate_hit(END_NUM_ASSIGNMENTS, END_HIT_DURATION, END_HIT_REWARD)
 
@@ -290,6 +328,8 @@ if __name__=="__main__":
 		print 'Ending hit complete'
 		print 'Ending hit assignment verified results:'
 		print '\t ' + str(story_sentence_choices)
+		output_file.write('Ending hit assignment verified results:'+ '\n')
+		output_file.write('\t ' + str(story_sentence_choices)+ '\n')
 		print 'Issuing vote hit for ending assignments...'
 		vote_hit = mturk_vote_end_sentence.VotingSentenceHit(ACCESS_ID, SECRET_KEY, HOST, story, story_sentence_choices)
 		vote_hit.generate_hit(VOTE_NUM_ASSIGNMENTS, VOTE_HIT_DURATION, VOTE_HIT_REWARD)
@@ -304,12 +344,16 @@ if __name__=="__main__":
 		print 'Vote hit complete'
 		print 'Vote hit assignment verfied best choice result:'
 		print '\t' + story_best_choice
+		output_file.write('Vote hit assignment verfied best choice result:')
+		output_file.write('\t' + story_best_choice + '\n')
+		output_file.write('---------------------------------------' + '\n')
 		print '---------------------------------------'
 		print 'Story ' + str(story_count+1) + '...' + ' turker generation complete.'
 		print 'Resulting Story:'
+		output_file.write('Resulting Story: '+ '\n' + '\t')
 		for sentence in story:
 			print '\t ' + sentence
-		 
+		 	output_file.write(sentence + ' ')
 		story_count += 1
 		list_of_stories.append(story)
 
@@ -327,12 +371,18 @@ if __name__=="__main__":
 		print 'Vote hit complete'
 		print 'Vote hit assignment verfied best choice result:'
 		print '\t' + str(best_story)
+		output_file.write('Best voted story: ' + '\n')
+		output_file.write('\t' + str(best_story) + '\n')
 	else:
 		best_story = list_of_stories[0]
 
+	# Close output file
+	output_file.close()
 	'''
 	Publish best voted story to WordPress
 	'''
+	
 	print 'The highest voted story of ' + str(NUM_SAME_STORY) + ' stories has been published at http://turkeystories.wordpress.com'
 	wpp = mturk_wordpress.WordPressPoster(WORDPRESS_USERNAME, WORDPRESS_PASSWORD, WORDPRESS_HOST)
 	wpp.post_to_wordpress(best_story)
+	

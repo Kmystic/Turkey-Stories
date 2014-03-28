@@ -4,30 +4,46 @@ Turkey-Stories
 CSCE 438 Project
 
 Instructions:
-- Replace the placeholders for the ACCESS_ID and SECRET_KEY in main.py and run main.
-- It should run without issue and print out the 'completed' story, you can go to https://workersandbox.mturk.com/ and verify that the hits have been created
-* Note that only the hit generating portion of this code is complete. I have placed dummy data instead of actual results to test each HIT. 
-* We still need to complete gathering the actual data, and also waiting for the hit completion before generating the subsequent hit
-* I have sufficiently commented out the main to point these areas out
+- In main.py:
+	- Replace the placeholders for the ACCESS_ID and SECRET_KEY in main.py and run main.
+		- Make sure there are no existing HITs in your account
+	- Replace the HOST with the host name of your choice default is mechanical turk sandbox
+	- Replace Wordpress credentials with your wordpress credentials
+	- Replace constant values with your own choices:
+		- Default (for testing purposes):
+			- 1 Stories starting with same sentence
+			- 1 Assignments for all types of hits
+			- 1 Middle sentence
+- Compile the and run main.py 'python main.py'
+	- It will prompt you to enter a sentence to begin the turker process. Either type in a custom sentence, or type 0 to use one of our defaults.
+	- The program will continually run until the entire process is completed, and print out statements to console regarding its status.
+	- The progam will also produce a file 'output_file.txt' at the end with the results of the program
 
 Files:
 - main.py
-	- This file contains an end to end process of generating a turker story.
-		- Issues first sentence hits
-			- Verifies results
-		- Issues voting for those hits
-			- Appends results
-		- For some number of middle sentences wanted
-			- Issues middle sentence hits
-				- Verify results
+	- This file contains an end to end process of generating turker stories, voting on stories, and publishing them to wordpress
+		- For each story 
+			- Issues first sentence hits
+				- Verifies results
 			- Issues voting for those hits
-				- Appends results
-		- Issues end sentence hits
-			- Verfiy results
-		- Issues voting for thsoe hits
-			- Appends results
-		- Publishes story
-
+				- Verifies results
+				- Appends results to story
+			- For each middle sentence
+				- Issues middle sentence hits
+					- Verify results
+				- Issues voting for those hits
+					- Verifies results
+					- Appends results to story
+			- Issues end sentence hits
+				- Verfiy results
+			- Issues voting for those hits
+				- Verifies results
+				- Appends results to story
+		- Issues voting for stories
+			- Verifiies results
+		- Publishes highest voted story to wordpress
+- mturk_wordpress.py
+	- Contains a WordPressPoster class which both connencts to WordPress and posts given story
 - HIT Classes: 
 	- mturk_first_sentence.py
 	  - This python code creates a HIT with two questions. 

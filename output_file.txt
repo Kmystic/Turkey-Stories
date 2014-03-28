@@ -1,0 +1,18 @@
+Starter sentence: Hi there, I'm lilly.
+---------------------------------------
+Results for story number 1:
+Beginning hit assignment verified results:
+	 [u'Jelly.']
+Vote hit assignment verfied best choice result:
+	Jelly.
+---------------------------------------
+Results for middle hit 1:
+Middle hit assignment verified results:
+	 [u'Hi poop.']
+Vote hit assignment verfied best choice result:
+	Hi poop.
+---------------------------------------
+Results for ending hit for story number 1:
+Vote hit assignment verfied best choice result:	Finish me.
+---------------------------------------
+Resulting Story: 	 Hi there, I'm lilly.	 Jelly.	 Hi poop.	 Finish me.
