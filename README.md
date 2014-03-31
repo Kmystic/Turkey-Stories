@@ -8,7 +8,9 @@ Instructions:
 	- Replace the placeholders for the ACCESS_ID and SECRET_KEY in main.py and run main.
 		- Make sure there are no existing HITs in your account
 	- Replace the HOST with the host name of your choice default is mechanical turk sandbox
-	- Replace Wordpress credentials with your wordpress credentials
+	- Replace Wordpress credentials with your wordpress credentials or use ours
+		- Username: turkeystories
+		- The password is the same the class password for accessing the slides. Hint, it had to do with napster
 	- Replace constant values with your own choices:
 		- Default (for testing purposes):
 			- 1 Stories starting with same sentence
